@@ -1,0 +1,142 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: linear-gradient(to bottom, #33ccff, #66ffff);
+    overflow: hidden;
+}
+
+.container {
+    text-align: center;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 10px;
+    margin: 20px auto;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background-color: #ffffff;
+    border: 4px solid #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.cell.x {
+    color: #ff0000;
+    animation: glow-red 1s infinite alternate;
+}
+
+.cell.o {
+    color: #00ff00;
+    animation: glow-green 1s infinite alternate;
+}
+
+@keyframes glow-red {
+    0% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+    100% { border-color: #ff8080; box-shadow: 0 0 20px #ff8080; }
+}
+
+@keyframes glow-green {
+    0% { border-color: #00ff00; box-shadow: 0 0 10px #00ff00; }
+    100% { border-color: #80ff80; box-shadow: 0 0 20px #80ff80; }
+}
+
+.status {
+    margin: 20px 0;
+    font-size: 1.5em;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: #33ccff;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #66ffff;
+}
+
+/* Celebration Overlay */
+.celebration {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 10;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.celebration.active {
+    display: flex;
+}
+
+#winnerMessage {
+    font-size: 3.5em;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff99ff;
+    animation: glowText 2s infinite;
+}
+
+@keyframes glowText {
+    0% { text-shadow: 0 0 10px #ff00ff; }
+    50% { text-shadow: 0 0 20px #ff99ff; }
+    100% { text-shadow: 0 0 10px #ff00ff; }
+}
+
+.fireworks {
+    width: 100%;
+    height: 50%;
+    background: url('https://media.giphy.com/media/l0HUpt2s9Pclgt9Vm/giphy.gif') center no-repeat;
+    background-size: contain;
+}
+
+#playAgainButton {
+    margin-top: 20px;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    background: linear-gradient(45deg, #ff0066, #ffcc00);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    animation: glowButton 1.5s infinite alternate;
+}
+
+@keyframes glowButton {
+    0% { box-shadow: 0 0 10px #ff0066; }
+    100% { box-shadow: 0 0 20px #ffcc00; }
+}
+
+/* Fade In Effect */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
