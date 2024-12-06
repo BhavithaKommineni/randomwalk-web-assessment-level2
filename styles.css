@@ -1,142 +1,104 @@
-body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-image: linear-gradient(to bottom, #33ccff, #66ffff);
-    overflow: hidden;
+// Initialize the game board with empty strings
+let board = ['', '', '', '', '', '', '', '', ''];
+// Set the initial player as 'X'
+let currentPlayer = 'X';
+
+// Define all possible winning combinations for the game
+
+const winningCombinations = [
+    [0, 1, 2], // Top row
+    [3, 4, 5], // Middle row
+    [6, 7, 8], // Bottom row
+    [0, 3, 6], // Left column
+    [1, 4, 7], // Middle column
+    [2, 5, 8], // Right column
+    [0, 4, 8], // Top-left to bottom-right diagonal
+    [2, 4, 6]  // Top-right to bottom-left diagonal
+];
+
+// Select all the game cells
+const cells = document.querySelectorAll('.cell');
+// Get the element to display the current status
+const statusDisplay = document.getElementById('status');
+// Get the reset button
+const resetButton = document.getElementById('resetButton');
+// Get the celebration popup container
+const celebration = document.getElementById('celebration');
+// Get the winner message element inside the celebration popup
+const winnerMessage = document.getElementById('winnerMessage');
+// Get the play again button inside the celebration popup
+const playAgainButton = document.getElementById('playAgainButton');
+
+// Add click event listeners to all cells
+cells.forEach(cell => {
+    cell.addEventListener('click', handleCellClick);
+});
+
+// Add a click event listener to the reset button
+resetButton.addEventListener('click', resetGame);
+
+// Add a click event listener to the play again button
+playAgainButton.addEventListener('click', () => {
+    // Hide the celebration popup
+    celebration.classList.remove('active');
+    // Reset the game
+    resetGame();
+});
+
+// Handle a cell click event
+function handleCellClick(event) {
+    const cell = event.target; // The clicked cell
+    const index = cell.getAttribute('data-index'); // Get the cell's index
+
+    // If the cell is already filled or there's already a winner, do nothing
+    if (board[index] !== '' || checkWinner()) return;
+
+    // Update the board with the current player's symbol
+    board[index] = currentPlayer;
+    // Add a class to style the cell (e.g., 'x' or 'o')
+    cell.classList.add(currentPlayer.toLowerCase());
+    // Display the player's symbol in the cell
+    cell.textContent = currentPlayer;
+
+    // Check if the current player has won
+    if (checkWinner()) {
+        statusDisplay.textContent = `Player ${currentPlayer} wins!`; // Update the status display
+        celebrateWin(currentPlayer); // Show the celebration popup
+    } 
+    // Check if the board is full and there's no winner
+    else if (board.every(cell => cell !== '')) {
+        statusDisplay.textContent = 'It\'s a draw!'; // Update the status display for a draw
+    } 
+    // If the game is not over, switch the current player
+    else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        statusDisplay.textContent = `Player ${currentPlayer}'s turn`; // Update the status display
+    }
 }
 
-.container {
-    text-align: center;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+// Check if the current player has won
+function checkWinner() {
+    // Check each winning combination
+    return winningCombinations.some(combination => {
+        const [a, b, c] = combination; // Get indices of the combination
+        return board[a] === currentPlayer && board[b] === currentPlayer && board[c] === currentPlayer;
+    });
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(3, 100px);
-    gap: 10px;
-    margin: 20px auto;
+// Celebrate the winner
+function celebrateWin(winner) {
+    winnerMessage.textContent = `🎉 Player ${winner} Wins! 🎉`; // Update the winner message
+    celebration.classList.add('active'); // Show the celebration popup
 }
 
-.cell {
-    width: 100px;
-    height: 100px;
-    background-color: #ffffff;
-    border: 4px solid #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2em;
-    cursor: pointer;
-    transition: border-color 0.3s;
-}
-
-.cell.x {
-    color: #ff0000;
-    animation: glow-red 1s infinite alternate;
-}
-
-.cell.o {
-    color: #00ff00;
-    animation: glow-green 1s infinite alternate;
-}
-
-@keyframes glow-red {
-    0% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
-    100% { border-color: #ff8080; box-shadow: 0 0 20px #ff8080; }
-}
-
-@keyframes glow-green {
-    0% { border-color: #00ff00; box-shadow: 0 0 10px #00ff00; }
-    100% { border-color: #80ff80; box-shadow: 0 0 20px #80ff80; }
-}
-
-.status {
-    margin: 20px 0;
-    font-size: 1.5em;
-}
-
-button {
-    padding: 10px 20px;
-    font-size: 1em;
-    cursor: pointer;
-    background-color: #33ccff;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-}
-
-button:hover {
-    background-color: #66ffff;
-}
-
-/* Celebration Overlay */
-.celebration {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 10;
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-.celebration.active {
-    display: flex;
-}
-
-#winnerMessage {
-    font-size: 3.5em;
-    color: #fff;
-    text-align: center;
-    margin-bottom: 20px;
-    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff99ff;
-    animation: glowText 2s infinite;
-}
-
-@keyframes glowText {
-    0% { text-shadow: 0 0 10px #ff00ff; }
-    50% { text-shadow: 0 0 20px #ff99ff; }
-    100% { text-shadow: 0 0 10px #ff00ff; }
-}
-
-.fireworks {
-    width: 100%;
-    height: 50%;
-    background: url('https://media.giphy.com/media/l0HUpt2s9Pclgt9Vm/giphy.gif') center no-repeat;
-    background-size: contain;
-}
-
-#playAgainButton {
-    margin-top: 20px;
-    padding: 15px 30px;
-    font-size: 1.2em;
-    cursor: pointer;
-    background: linear-gradient(45deg, #ff0066, #ffcc00);
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    animation: glowButton 1.5s infinite alternate;
-}
-
-@keyframes glowButton {
-    0% { box-shadow: 0 0 10px #ff0066; }
-    100% { box-shadow: 0 0 20px #ffcc00; }
-}
-
-/* Fade In Effect */
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+// Reset the game
+function resetGame() {
+    board = ['', '', '', '', '', '', '', '', '']; // Clear the board
+    currentPlayer = 'X'; // Reset the current player to 'X'
+    // Clear the contents and classes of all cells
+    cells.forEach(cell => {
+        cell.textContent = '';
+        cell.className = 'cell';
+    });
+    statusDisplay.textContent = `Player ${currentPlayer}'s turn`; // Reset the status display
 }
